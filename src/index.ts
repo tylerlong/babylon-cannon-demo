@@ -9,17 +9,21 @@ import {
   MeshPhongMaterial,
   TextureLoader,
   PointLight,
+  PlaneGeometry,
+  RepeatWrapping,
 } from 'three';
 import {World, Body, NaiveBroadphase, Plane, Sphere} from 'cannon-es';
 
 import ballImage from './ball.png';
+import groundImage from './ground.png';
 
 let world: World;
 let body: Body;
 let camera: PerspectiveCamera;
 let scene: Scene;
 let renderer: WebGLRenderer;
-let mesh: Mesh;
+let ballMesh: Mesh;
+let groundMesh: Mesh;
 
 initThree();
 initCannon();
@@ -43,9 +47,18 @@ function initThree() {
   const geometry = new SphereGeometry(1);
   const textureLoader = new TextureLoader();
   const ballTexture = textureLoader.load(ballImage);
-  const material = new MeshPhongMaterial({map: ballTexture});
-  mesh = new Mesh(geometry, material);
-  scene.add(mesh);
+  const ballMaterial = new MeshPhongMaterial({map: ballTexture});
+  ballMesh = new Mesh(geometry, ballMaterial);
+  scene.add(ballMesh);
+
+  const ground = new PlaneGeometry(100, 100);
+  const groundTexture = textureLoader.load(groundImage);
+  groundTexture.wrapS = groundTexture.wrapT = RepeatWrapping;
+  groundTexture.repeat.set(20, 20);
+  const groundMaterial = new MeshPhongMaterial({map: groundTexture});
+  groundMesh = new Mesh(ground, groundMaterial);
+  scene.add(groundMesh);
+
   renderer = new WebGLRenderer();
   renderer.setSize(800, 600);
   document.body.appendChild(renderer.domElement);
@@ -108,8 +121,8 @@ function animate() {
 
 function updatePhysics() {
   world.step(1 / 60);
-  mesh.position.copy(body.position as unknown as Vector3);
-  mesh.quaternion.copy(body.quaternion as unknown as Quaternion);
+  ballMesh.position.copy(body.position as unknown as Vector3);
+  ballMesh.quaternion.copy(body.quaternion as unknown as Quaternion);
 }
 
 function render() {
