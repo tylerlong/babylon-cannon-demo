@@ -1,17 +1,4 @@
-import {
-  PerspectiveCamera,
-  Scene,
-  WebGLRenderer,
-  Mesh,
-  Vector3,
-  Quaternion,
-  SphereGeometry,
-  MeshPhongMaterial,
-  TextureLoader,
-  PointLight,
-  PlaneGeometry,
-  RepeatWrapping,
-} from 'three';
+import {Vector3, Quaternion} from 'three';
 import {
   World,
   Body,
@@ -22,55 +9,14 @@ import {
   ContactMaterial,
 } from 'cannon-es';
 
-import ballImage from './ball.png';
-import groundImage from './ground.png';
+import ThreeManager from './three-manager';
 
 let world: World;
 let body: Body;
-let camera: PerspectiveCamera;
-let scene: Scene;
-let renderer: WebGLRenderer;
-let ballMesh: Mesh;
-let groundMesh: Mesh;
 
-initThree();
+const threeManager = new ThreeManager();
 initCannon();
 animate();
-
-function initThree() {
-  scene = new Scene();
-
-  const light = new PointLight(0xffffff, 1);
-  light.position.set(1, 1, 5);
-  scene.add(light);
-
-  camera = new PerspectiveCamera(
-    75,
-    window.innerWidth / window.innerHeight,
-    1,
-    100
-  );
-  camera.position.z = 5;
-  scene.add(camera);
-  const geometry = new SphereGeometry(1);
-  const textureLoader = new TextureLoader();
-  const ballTexture = textureLoader.load(ballImage);
-  const ballMaterial = new MeshPhongMaterial({map: ballTexture});
-  ballMesh = new Mesh(geometry, ballMaterial);
-  scene.add(ballMesh);
-
-  const ground = new PlaneGeometry(100, 100);
-  const groundTexture = textureLoader.load(groundImage);
-  groundTexture.wrapS = groundTexture.wrapT = RepeatWrapping;
-  groundTexture.repeat.set(20, 20);
-  const groundMaterial = new MeshPhongMaterial({map: groundTexture});
-  groundMesh = new Mesh(ground, groundMaterial);
-  scene.add(groundMesh);
-
-  renderer = new WebGLRenderer();
-  renderer.setSize(800, 600);
-  document.body.appendChild(renderer.domElement);
-}
 
 function initCannon() {
   world = new World();
@@ -140,10 +86,12 @@ function animate() {
 
 function updatePhysics() {
   world.step(1 / 60);
-  ballMesh.position.copy(body.position as unknown as Vector3);
-  ballMesh.quaternion.copy(body.quaternion as unknown as Quaternion);
+  threeManager.ballMesh.position.copy(body.position as unknown as Vector3);
+  threeManager.ballMesh.quaternion.copy(
+    body.quaternion as unknown as Quaternion
+  );
 }
 
 function render() {
-  renderer.render(scene, camera);
+  threeManager.render();
 }
