@@ -17,6 +17,10 @@ const config: Configuration = {
           loader: 'ts-loader',
         },
       },
+      {
+        test: /\.png$/i,
+        use: 'file-loader',
+      },
     ],
   },
   plugins: [

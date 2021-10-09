@@ -3,12 +3,16 @@ import {
   Scene,
   WebGLRenderer,
   Mesh,
-  MeshBasicMaterial,
   Vector3,
   Quaternion,
   SphereGeometry,
+  MeshPhongMaterial,
+  TextureLoader,
+  PointLight,
 } from 'three';
 import {World, Body, NaiveBroadphase, Plane, Sphere} from 'cannon-es';
+
+import ballImage from './ball.png';
 
 let world: World;
 let body: Body;
@@ -23,6 +27,11 @@ animate();
 
 function initThree() {
   scene = new Scene();
+
+  const light = new PointLight(0xffffff, 1);
+  light.position.set(1, 1, 5);
+  scene.add(light);
+
   camera = new PerspectiveCamera(
     75,
     window.innerWidth / window.innerHeight,
@@ -32,7 +41,9 @@ function initThree() {
   camera.position.z = 5;
   scene.add(camera);
   const geometry = new SphereGeometry(1);
-  const material = new MeshBasicMaterial({color: 0xff0000, wireframe: true});
+  const textureLoader = new TextureLoader();
+  const ballTexture = textureLoader.load(ballImage);
+  const material = new MeshPhongMaterial({map: ballTexture});
   mesh = new Mesh(geometry, material);
   scene.add(mesh);
   renderer = new WebGLRenderer();
