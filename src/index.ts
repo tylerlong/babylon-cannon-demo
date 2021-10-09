@@ -12,7 +12,15 @@ import {
   PlaneGeometry,
   RepeatWrapping,
 } from 'three';
-import {World, Body, NaiveBroadphase, Plane, Sphere} from 'cannon-es';
+import {
+  World,
+  Body,
+  NaiveBroadphase,
+  Plane,
+  Sphere,
+  Material,
+  ContactMaterial,
+} from 'cannon-es';
 
 import ballImage from './ball.png';
 import groundImage from './ground.png';
@@ -71,21 +79,32 @@ function initCannon() {
 
   // create the shape
   const shape = new Sphere(1);
+  const bodyMaterial = new Material();
   body = new Body({
     mass: 1,
+    material: bodyMaterial,
   });
   body.addShape(shape);
   body.angularDamping = 0.9;
-  body.position.set(0, 0, 2);
+  body.position.set(0, 0, 3);
   world.addBody(body);
 
   // Create ground
+  const groundMaterial = new Material();
   const groundBody = new Body({
     mass: 0,
+    material: groundMaterial,
   });
   const groundShape = new Plane();
   groundBody.addShape(groundShape);
   world.addBody(groundBody);
+
+  world.addContactMaterial(
+    new ContactMaterial(groundMaterial, bodyMaterial, {
+      friction: 0.5,
+      restitution: 0.7,
+    })
+  );
 
   document.addEventListener('keydown', event => {
     const speed = 3;
