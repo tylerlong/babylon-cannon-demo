@@ -21,7 +21,7 @@ const config: Configuration = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: './src/index.html',
+      title: 'THREE.js and CANNON.js Demo',
       scriptLoading: 'blocking',
     }),
   ],
