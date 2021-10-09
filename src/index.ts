@@ -3,12 +3,12 @@ import {
   Scene,
   WebGLRenderer,
   Mesh,
-  BoxGeometry,
   MeshBasicMaterial,
   Vector3,
   Quaternion,
+  SphereGeometry,
 } from 'three';
-import {World, Body, NaiveBroadphase, Vec3, Box, Plane} from 'cannon-es';
+import {World, Body, NaiveBroadphase, Plane, Sphere} from 'cannon-es';
 
 let world: World;
 let body: Body;
@@ -31,7 +31,7 @@ function initThree() {
   );
   camera.position.z = 5;
   scene.add(camera);
-  const geometry = new BoxGeometry(2, 2, 2);
+  const geometry = new SphereGeometry(1);
   const material = new MeshBasicMaterial({color: 0xff0000, wireframe: true});
   mesh = new Mesh(geometry, material);
   scene.add(mesh);
@@ -46,12 +46,12 @@ function initCannon() {
   world.broadphase = new NaiveBroadphase();
 
   // create the shape
-  const shape = new Box(new Vec3(1, 1, 1));
+  const shape = new Sphere(1);
   body = new Body({
     mass: 1,
   });
   body.addShape(shape);
-  body.angularDamping = 0.5;
+  body.angularDamping = 0.9;
   body.position.set(0, 0, 2);
   world.addBody(body);
 
@@ -64,21 +64,22 @@ function initCannon() {
   world.addBody(groundBody);
 
   document.addEventListener('keydown', event => {
+    const speed = 3;
     switch (event.key) {
       case 'ArrowLeft': {
-        body.angularVelocity.y = -10;
+        body.angularVelocity.y = -speed;
         break;
       }
       case 'ArrowRight': {
-        body.angularVelocity.y = 10;
+        body.angularVelocity.y = speed;
         break;
       }
       case 'ArrowUp': {
-        body.angularVelocity.x = -10;
+        body.angularVelocity.x = -speed;
         break;
       }
       case 'ArrowDown': {
-        body.angularVelocity.x = 10;
+        body.angularVelocity.x = speed;
         break;
       }
       default: {
