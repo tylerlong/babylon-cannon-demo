@@ -1,3 +1,3 @@
-# three cannon demo
+# three-cannon-demo
 
 THREE.js and CANNON.js Demo
