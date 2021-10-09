@@ -8,7 +8,7 @@ import {
   Vector3,
   Quaternion,
 } from 'three';
-import {World, Body, NaiveBroadphase, Vec3, Box} from 'cannon-es';
+import {World, Body, NaiveBroadphase, Vec3, Box, Plane} from 'cannon-es';
 
 let world: World;
 let body: Body;
@@ -42,32 +42,43 @@ function initThree() {
 
 function initCannon() {
   world = new World();
-  world.gravity.set(0, 0, 0);
+  world.gravity.set(0, 0, -9.82);
   world.broadphase = new NaiveBroadphase();
+
+  // create the shape
   const shape = new Box(new Vec3(1, 1, 1));
   body = new Body({
     mass: 1,
   });
   body.addShape(shape);
-  body.angularVelocity.set(0, 10, 0);
   body.angularDamping = 0.5;
+  body.position.set(0, 0, 2);
   world.addBody(body);
+
+  // Create ground
+  const groundBody = new Body({
+    mass: 0,
+  });
+  const groundShape = new Plane();
+  groundBody.addShape(groundShape);
+  world.addBody(groundBody);
+
   document.addEventListener('keydown', event => {
     switch (event.key) {
       case 'ArrowLeft': {
-        body.angularVelocity.y -= 10;
+        body.angularVelocity.y = -10;
         break;
       }
       case 'ArrowRight': {
-        body.angularVelocity.y += 10;
+        body.angularVelocity.y = 10;
         break;
       }
       case 'ArrowUp': {
-        body.angularVelocity.x -= 10;
+        body.angularVelocity.x = -10;
         break;
       }
       case 'ArrowDown': {
-        body.angularVelocity.x += 10;
+        body.angularVelocity.x = 10;
         break;
       }
       default: {
