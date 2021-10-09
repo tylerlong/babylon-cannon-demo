@@ -1,3 +1,6 @@
+import * as THREE from 'three';
+import * as CANNON from 'cannon-es';
+
 var world, mass, body, shape, timeStep=1/60,
 camera, scene, renderer, geometry, material, mesh;
 
