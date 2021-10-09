@@ -1,12 +1,16 @@
 /* eslint-disable node/no-unpublished-import */
 import {Configuration} from 'webpack';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
+import path from 'path/posix';
 
 const config: Configuration = {
   mode: 'development',
   devtool: 'source-map',
   entry: {
     index: './src/index.ts',
+  },
+  output: {
+    path: path.join(__dirname, 'docs'),
   },
   module: {
     rules: [
