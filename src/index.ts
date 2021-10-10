@@ -81,7 +81,7 @@ function initCannon() {
 function animate() {
   requestAnimationFrame(animate);
   updatePhysics();
-  render();
+  threeManager.render();
 }
 
 function updatePhysics() {
@@ -90,8 +90,4 @@ function updatePhysics() {
   threeManager.ballMesh.quaternion.copy(
     body.quaternion as unknown as Quaternion
   );
-}
-
-function render() {
-  threeManager.render();
 }
