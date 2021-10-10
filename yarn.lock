@@ -576,10 +576,10 @@ async@^2.6.2:
   dependencies:
     lodash "^4.17.14"
 
-babylonjs@^4.2.0:
-  version "4.2.0"
-  resolved "https://registry.yarnpkg.com/babylonjs/-/babylonjs-4.2.0.tgz#8f0d957a726de4c065904b14c2f413f455145d38"
-  integrity sha512-4hniJzWRkV0tDTTYGEHPk1lnfWn0HIw7HOvNWPK0rpUIbJooyeD9E5uVyHnslDedt0mtrA7QZu4i2Cz1DEmSsA==
+babylonjs@5.0.0-alpha.50:
+  version "5.0.0-alpha.50"
+  resolved "https://registry.yarnpkg.com/babylonjs/-/babylonjs-5.0.0-alpha.50.tgz#cee8001c21b9c277094a3b6f1004110cbf40d6cc"
+  integrity sha512-b5YmW9Hf1+R5t7i5uK/+DwjkEBShyUZXDPn/QvhtIDd5ZD15ecCIPutTTd9WRsnsNxbL4JnTs/0sg/1tTddYcA==
 
 balanced-match@^1.0.0:
   version "1.0.2"

@@ -5,7 +5,7 @@
     "release": "webpack --progress"
   },
   "dependencies": {
-    "babylonjs": "^4.2.0",
+    "babylonjs": "5.0.0-alpha.50",
     "cannon-es": "^0.18.0"
   },
   "devDependencies": {
