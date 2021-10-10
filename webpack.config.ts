@@ -29,7 +29,7 @@ const config: Configuration = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      title: 'THREE.js and CANNON.js Demo',
+      title: 'Babylon.js and CANNON.js Demo',
     }),
   ],
   resolve: {

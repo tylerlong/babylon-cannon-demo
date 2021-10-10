@@ -7,9 +7,9 @@ import {
   Sphere,
   World,
 } from 'cannon-es';
-import {Quaternion, Vector3} from 'three';
+// import {Quaternion, Vector3} from 'three';
 
-import ThreeManager from './three-manager';
+import BabylonManager from './babylon-manager';
 
 class CannonManager {
   ballBody: Body;
@@ -81,15 +81,15 @@ class CannonManager {
     });
   }
 
-  updatePhysics(threeManager: ThreeManager) {
-    this.world.step(1 / 60);
-    threeManager.ballMesh.position.copy(
-      this.ballBody.position as unknown as Vector3
-    );
-    threeManager.ballMesh.quaternion.copy(
-      this.ballBody.quaternion as unknown as Quaternion
-    );
-  }
+  // updatePhysics(threeManager: BabylonManager) {
+  //   this.world.step(1 / 60);
+  //   threeManager.ballMesh.position.copy(
+  //     this.ballBody.position as unknown as Vector3
+  //   );
+  //   threeManager.ballMesh.quaternion.copy(
+  //     this.ballBody.quaternion as unknown as Quaternion
+  //   );
+  // }
 }
 
 export default CannonManager;

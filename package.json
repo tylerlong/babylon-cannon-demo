@@ -5,12 +5,11 @@
     "release": "webpack --progress"
   },
   "dependencies": {
-    "cannon-es": "^0.18.0",
-    "three": "^0.133.1"
+    "babylonjs": "^4.2.0",
+    "cannon-es": "^0.18.0"
   },
   "devDependencies": {
     "@types/node": "^16.10.3",
-    "@types/three": "^0.133.0",
     "file-loader": "^6.2.0",
     "gts": "^3.1.0",
     "html-webpack-plugin": "^5.3.2",

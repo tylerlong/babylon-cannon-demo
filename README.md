@@ -1,6 +1,6 @@
-# three-cannon-demo
+# babylon-cannon-demo
 
-THREE.js and CANNON.js Demo
+Babylon.js and CANNON.js Demo
 
 
 ## Ref
