@@ -16,19 +16,20 @@ class CannonManager {
   world: World;
 
   constructor() {
+    // Init the world
     this.world = new World();
-    this.world.gravity.set(0, 0, -9.82);
+    this.world.gravity.set(0, 0, -9.8);
     this.world.broadphase = new NaiveBroadphase();
 
     // Create the ball
-    const shape = new Sphere(1);
     const bodyMaterial = new Material();
     this.ballBody = new Body({
       mass: 1,
       material: bodyMaterial,
     });
-    this.ballBody.addShape(shape);
-    this.ballBody.angularDamping = 0.9;
+    const ballShape = new Sphere(1);
+    this.ballBody.addShape(ballShape);
+    this.ballBody.angularDamping = 0.5;
     this.ballBody.position.set(0, 0, 3);
     this.world.addBody(this.ballBody);
 
@@ -42,17 +43,18 @@ class CannonManager {
     groundBody.addShape(groundShape);
     this.world.addBody(groundBody);
 
+    // Interaction between the ball and the ground
     this.world.addContactMaterial(
       new ContactMaterial(groundMaterial, bodyMaterial, {
         friction: 0.5,
-        restitution: 0.7,
+        restitution: 0.5,
       })
     );
 
-    this.addEventListeners();
+    this.enableKeyboardControl();
   }
 
-  addEventListeners() {
+  enableKeyboardControl() {
     document.addEventListener('keydown', event => {
       const speed = 3;
       switch (event.key) {
