@@ -63470,18 +63470,19 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 const cannon_es_1 = __webpack_require__(/*! cannon-es */ "./node_modules/cannon-es/dist/cannon-es.js");
 class CannonManager {
     constructor() {
+        // Init the world
         this.world = new cannon_es_1.World();
-        this.world.gravity.set(0, 0, -9.82);
+        this.world.gravity.set(0, 0, -9.8);
         this.world.broadphase = new cannon_es_1.NaiveBroadphase();
         // Create the ball
-        const shape = new cannon_es_1.Sphere(1);
         const bodyMaterial = new cannon_es_1.Material();
         this.ballBody = new cannon_es_1.Body({
             mass: 1,
             material: bodyMaterial,
         });
-        this.ballBody.addShape(shape);
-        this.ballBody.angularDamping = 0.9;
+        const ballShape = new cannon_es_1.Sphere(1);
+        this.ballBody.addShape(ballShape);
+        this.ballBody.angularDamping = 0.5;
         this.ballBody.position.set(0, 0, 3);
         this.world.addBody(this.ballBody);
         // Create ground
@@ -63493,13 +63494,14 @@ class CannonManager {
         const groundShape = new cannon_es_1.Plane();
         groundBody.addShape(groundShape);
         this.world.addBody(groundBody);
+        // Interaction between the ball and the ground
         this.world.addContactMaterial(new cannon_es_1.ContactMaterial(groundMaterial, bodyMaterial, {
             friction: 0.5,
-            restitution: 0.7,
+            restitution: 0.5,
         }));
-        this.addEventListeners();
+        this.enableKeyboardControl();
     }
-    addEventListeners() {
+    enableKeyboardControl() {
         document.addEventListener('keydown', event => {
             const speed = 3;
             switch (event.key) {
@@ -63551,12 +63553,12 @@ const three_manager_1 = __importDefault(__webpack_require__(/*! ./three-manager 
 const cannon_manager_1 = __importDefault(__webpack_require__(/*! ./cannon-manager */ "./src/cannon-manager.ts"));
 const threeManager = new three_manager_1.default();
 const cannonManager = new cannon_manager_1.default();
-animate();
-function animate() {
+const animate = () => {
     requestAnimationFrame(animate);
     cannonManager.updatePhysics(threeManager);
     threeManager.render();
-}
+};
+animate();
 
 
 /***/ }),
@@ -63575,21 +63577,25 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 const three_1 = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
 const ball_png_1 = __importDefault(__webpack_require__(/*! ./ball.png */ "./src/ball.png"));
 const ground_png_1 = __importDefault(__webpack_require__(/*! ./ground.png */ "./src/ground.png"));
+const textureLoader = new three_1.TextureLoader();
 class ThreeManager {
     constructor() {
         this.scene = new three_1.Scene();
-        const textureLoader = new three_1.TextureLoader();
-        const light = new three_1.PointLight(0xffffff, 1);
-        light.position.set(1, 1, 5);
-        this.scene.add(light);
+        // Add camera
         this.camera = new three_1.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 100);
         this.camera.position.z = 5;
         this.scene.add(this.camera);
+        // Add light
+        const light = new three_1.PointLight(0xffffff, 1);
+        light.position.set(1, 1, 5);
+        this.scene.add(light);
+        // Add ball
         const ballTexture = textureLoader.load(ball_png_1.default);
         const ballMaterial = new three_1.MeshPhongMaterial({ map: ballTexture });
         const geometry = new three_1.SphereGeometry(1);
         this.ballMesh = new three_1.Mesh(geometry, ballMaterial);
         this.scene.add(this.ballMesh);
+        // Add ground
         const ground = new three_1.PlaneGeometry(100, 100);
         const groundTexture = textureLoader.load(ground_png_1.default);
         groundTexture.wrapS = groundTexture.wrapT = three_1.RepeatWrapping;
@@ -63597,6 +63603,7 @@ class ThreeManager {
         const groundMaterial = new three_1.MeshPhongMaterial({ map: groundTexture });
         const groundMesh = new three_1.Mesh(ground, groundMaterial);
         this.scene.add(groundMesh);
+        // Init renderer
         this.renderer = new three_1.WebGLRenderer();
         this.renderer.setSize(800, 600);
         document.body.appendChild(this.renderer.domElement);
