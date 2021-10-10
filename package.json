@@ -2,7 +2,7 @@
   "license": "MIT",
   "scripts": {
     "serve": "webpack serve",
-    "build": "webpack --progress"
+    "release": "webpack --progress"
   },
   "dependencies": {
     "cannon-es": "^0.18.0",

@@ -63459,6 +63459,83 @@ if ( typeof window !== 'undefined' ) {
 
 /***/ }),
 
+/***/ "./src/cannon-manager.ts":
+/*!*******************************!*\
+  !*** ./src/cannon-manager.ts ***!
+  \*******************************/
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const cannon_es_1 = __webpack_require__(/*! cannon-es */ "./node_modules/cannon-es/dist/cannon-es.js");
+class CannonManager {
+    constructor() {
+        this.world = new cannon_es_1.World();
+        this.world.gravity.set(0, 0, -9.82);
+        this.world.broadphase = new cannon_es_1.NaiveBroadphase();
+        // Create the ball
+        const shape = new cannon_es_1.Sphere(1);
+        const bodyMaterial = new cannon_es_1.Material();
+        this.ballBody = new cannon_es_1.Body({
+            mass: 1,
+            material: bodyMaterial,
+        });
+        this.ballBody.addShape(shape);
+        this.ballBody.angularDamping = 0.9;
+        this.ballBody.position.set(0, 0, 3);
+        this.world.addBody(this.ballBody);
+        // Create ground
+        const groundMaterial = new cannon_es_1.Material();
+        const groundBody = new cannon_es_1.Body({
+            mass: 0,
+            material: groundMaterial,
+        });
+        const groundShape = new cannon_es_1.Plane();
+        groundBody.addShape(groundShape);
+        this.world.addBody(groundBody);
+        this.world.addContactMaterial(new cannon_es_1.ContactMaterial(groundMaterial, bodyMaterial, {
+            friction: 0.5,
+            restitution: 0.7,
+        }));
+        this.addEventListeners();
+    }
+    addEventListeners() {
+        document.addEventListener('keydown', event => {
+            const speed = 3;
+            switch (event.key) {
+                case 'ArrowLeft': {
+                    this.ballBody.angularVelocity.y = -speed;
+                    break;
+                }
+                case 'ArrowRight': {
+                    this.ballBody.angularVelocity.y = speed;
+                    break;
+                }
+                case 'ArrowUp': {
+                    this.ballBody.angularVelocity.x = -speed;
+                    break;
+                }
+                case 'ArrowDown': {
+                    this.ballBody.angularVelocity.x = speed;
+                    break;
+                }
+                default: {
+                    break;
+                }
+            }
+        });
+    }
+    updatePhysics(threeManager) {
+        this.world.step(1 / 60);
+        threeManager.ballMesh.position.copy(this.ballBody.position);
+        threeManager.ballMesh.quaternion.copy(this.ballBody.quaternion);
+    }
+}
+exports["default"] = CannonManager;
+
+
+/***/ }),
+
 /***/ "./src/index.ts":
 /*!**********************!*\
   !*** ./src/index.ts ***!
@@ -63470,111 +63547,65 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-const three_1 = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
-const cannon_es_1 = __webpack_require__(/*! cannon-es */ "./node_modules/cannon-es/dist/cannon-es.js");
-const ball_png_1 = __importDefault(__webpack_require__(/*! ./ball.png */ "./src/ball.png"));
-const ground_png_1 = __importDefault(__webpack_require__(/*! ./ground.png */ "./src/ground.png"));
-let world;
-let body;
-let camera;
-let scene;
-let renderer;
-let ballMesh;
-let groundMesh;
-initThree();
-initCannon();
+const three_manager_1 = __importDefault(__webpack_require__(/*! ./three-manager */ "./src/three-manager.ts"));
+const cannon_manager_1 = __importDefault(__webpack_require__(/*! ./cannon-manager */ "./src/cannon-manager.ts"));
+const threeManager = new three_manager_1.default();
+const cannonManager = new cannon_manager_1.default();
 animate();
-function initThree() {
-    scene = new three_1.Scene();
-    const light = new three_1.PointLight(0xffffff, 1);
-    light.position.set(1, 1, 5);
-    scene.add(light);
-    camera = new three_1.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 100);
-    camera.position.z = 5;
-    scene.add(camera);
-    const geometry = new three_1.SphereGeometry(1);
-    const textureLoader = new three_1.TextureLoader();
-    const ballTexture = textureLoader.load(ball_png_1.default);
-    const ballMaterial = new three_1.MeshPhongMaterial({ map: ballTexture });
-    ballMesh = new three_1.Mesh(geometry, ballMaterial);
-    scene.add(ballMesh);
-    const ground = new three_1.PlaneGeometry(100, 100);
-    const groundTexture = textureLoader.load(ground_png_1.default);
-    groundTexture.wrapS = groundTexture.wrapT = three_1.RepeatWrapping;
-    groundTexture.repeat.set(20, 20);
-    const groundMaterial = new three_1.MeshPhongMaterial({ map: groundTexture });
-    groundMesh = new three_1.Mesh(ground, groundMaterial);
-    scene.add(groundMesh);
-    renderer = new three_1.WebGLRenderer();
-    renderer.setSize(800, 600);
-    document.body.appendChild(renderer.domElement);
-}
-function initCannon() {
-    world = new cannon_es_1.World();
-    world.gravity.set(0, 0, -9.82);
-    world.broadphase = new cannon_es_1.NaiveBroadphase();
-    // create the shape
-    const shape = new cannon_es_1.Sphere(1);
-    const bodyMaterial = new cannon_es_1.Material();
-    body = new cannon_es_1.Body({
-        mass: 1,
-        material: bodyMaterial,
-    });
-    body.addShape(shape);
-    body.angularDamping = 0.9;
-    body.position.set(0, 0, 3);
-    world.addBody(body);
-    // Create ground
-    const groundMaterial = new cannon_es_1.Material();
-    const groundBody = new cannon_es_1.Body({
-        mass: 0,
-        material: groundMaterial,
-    });
-    const groundShape = new cannon_es_1.Plane();
-    groundBody.addShape(groundShape);
-    world.addBody(groundBody);
-    world.addContactMaterial(new cannon_es_1.ContactMaterial(groundMaterial, bodyMaterial, {
-        friction: 0.5,
-        restitution: 0.7,
-    }));
-    document.addEventListener('keydown', event => {
-        const speed = 3;
-        switch (event.key) {
-            case 'ArrowLeft': {
-                body.angularVelocity.y = -speed;
-                break;
-            }
-            case 'ArrowRight': {
-                body.angularVelocity.y = speed;
-                break;
-            }
-            case 'ArrowUp': {
-                body.angularVelocity.x = -speed;
-                break;
-            }
-            case 'ArrowDown': {
-                body.angularVelocity.x = speed;
-                break;
-            }
-            default: {
-                break;
-            }
-        }
-    });
-}
 function animate() {
     requestAnimationFrame(animate);
-    updatePhysics();
-    render();
+    cannonManager.updatePhysics(threeManager);
+    threeManager.render();
 }
-function updatePhysics() {
-    world.step(1 / 60);
-    ballMesh.position.copy(body.position);
-    ballMesh.quaternion.copy(body.quaternion);
+
+
+/***/ }),
+
+/***/ "./src/three-manager.ts":
+/*!******************************!*\
+  !*** ./src/three-manager.ts ***!
+  \******************************/
+/***/ (function(__unused_webpack_module, exports, __webpack_require__) {
+
+
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const three_1 = __webpack_require__(/*! three */ "./node_modules/three/build/three.module.js");
+const ball_png_1 = __importDefault(__webpack_require__(/*! ./ball.png */ "./src/ball.png"));
+const ground_png_1 = __importDefault(__webpack_require__(/*! ./ground.png */ "./src/ground.png"));
+class ThreeManager {
+    constructor() {
+        this.scene = new three_1.Scene();
+        const textureLoader = new three_1.TextureLoader();
+        const light = new three_1.PointLight(0xffffff, 1);
+        light.position.set(1, 1, 5);
+        this.scene.add(light);
+        this.camera = new three_1.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 1, 100);
+        this.camera.position.z = 5;
+        this.scene.add(this.camera);
+        const ballTexture = textureLoader.load(ball_png_1.default);
+        const ballMaterial = new three_1.MeshPhongMaterial({ map: ballTexture });
+        const geometry = new three_1.SphereGeometry(1);
+        this.ballMesh = new three_1.Mesh(geometry, ballMaterial);
+        this.scene.add(this.ballMesh);
+        const ground = new three_1.PlaneGeometry(100, 100);
+        const groundTexture = textureLoader.load(ground_png_1.default);
+        groundTexture.wrapS = groundTexture.wrapT = three_1.RepeatWrapping;
+        groundTexture.repeat.set(20, 20);
+        const groundMaterial = new three_1.MeshPhongMaterial({ map: groundTexture });
+        const groundMesh = new three_1.Mesh(ground, groundMaterial);
+        this.scene.add(groundMesh);
+        this.renderer = new three_1.WebGLRenderer();
+        this.renderer.setSize(800, 600);
+        document.body.appendChild(this.renderer.domElement);
+    }
+    render() {
+        this.renderer.render(this.scene, this.camera);
+    }
 }
-function render() {
-    renderer.render(scene, camera);
-}
+exports["default"] = ThreeManager;
 
 
 /***/ })
