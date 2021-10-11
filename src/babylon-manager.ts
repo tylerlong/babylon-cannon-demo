@@ -34,7 +34,7 @@ const createScene = function () {
   // Target the camera to scene origin
   camera.setTarget(BABYLON.Vector3.Zero());
   // Attach the camera to the canvas
-  camera.attachControl(canvas, false);
+  // camera.attachControl(canvas, false);
 
   // Create a basic light, aiming 0, 1, 0 - meaning, to the sky
   const light = new BABYLON.HemisphericLight(
@@ -71,6 +71,39 @@ const createScene = function () {
     {mass: 0, restitution: 0.9},
     scene
   );
+
+  document.addEventListener('keydown', event => {
+    const speed = 3;
+    switch (event.key) {
+      case 'ArrowLeft': {
+        sphere.physicsImpostor?.setLinearVelocity(
+          new BABYLON.Vector3(-speed, 0, 0)
+        );
+        break;
+      }
+      case 'ArrowRight': {
+        sphere.physicsImpostor?.setLinearVelocity(
+          new BABYLON.Vector3(speed, 0, 0)
+        );
+        break;
+      }
+      case 'ArrowUp': {
+        sphere.physicsImpostor?.setLinearVelocity(
+          new BABYLON.Vector3(0, 0, speed)
+        );
+        break;
+      }
+      case 'ArrowDown': {
+        sphere.physicsImpostor?.setLinearVelocity(
+          new BABYLON.Vector3(0, 0, -speed)
+        );
+        break;
+      }
+      default: {
+        break;
+      }
+    }
+  });
 
   // Return the created scene
   return scene;
