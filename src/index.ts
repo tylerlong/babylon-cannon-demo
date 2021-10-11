@@ -5,8 +5,9 @@ import * as CANNON from 'cannon-es';
 
 import ballImage from './ball.png';
 import concreteImage from './concrete.png';
+import {createWalls} from './utils';
 
-(global as any).CANNON = CANNON;
+(global as unknown as {CANNON: typeof CANNON}).CANNON = CANNON;
 
 // Create canvas
 const canvas = document.createElement('canvas');
@@ -59,7 +60,7 @@ const createScene = function () {
   // Create a built-in "ground" shape;
   const ground = BABYLON.MeshBuilder.CreateGround(
     'ground1',
-    {width: 6, height: 6, subdivisions: 2, updatable: false},
+    {width: 6, height: 6, updatable: false},
     scene
   );
   const groundMaterial = new BABYLON.StandardMaterial('ground', scene);
@@ -67,23 +68,8 @@ const createScene = function () {
   ground.material = groundMaterial;
 
   // Create walls
-  const wall1 = BABYLON.MeshBuilder.CreateBox(
-    'wall1',
-    {
-      size: 1,
-    },
-    scene
-  );
-  wall1.position.y += 0.5;
-  const wall2 = BABYLON.MeshBuilder.CreateBox(
-    'wall2',
-    {
-      size: 1,
-    },
-    scene
-  );
-  wall2.position.y += 0.5;
-  wall2.position.x += 1;
+  createWalls(scene);
+
   sphere.physicsImpostor = new BABYLON.PhysicsImpostor(
     sphere,
     BABYLON.PhysicsImpostor.SphereImpostor,
