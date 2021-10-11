@@ -1,5 +1,6 @@
 import * as BABYLON from 'babylonjs';
 import * as CANNON from 'cannon-es';
+import {random} from 'lodash';
 
 import './index.css';
 
@@ -39,21 +40,19 @@ const createScene = function () {
 
   // Create a FreeCamera, and set its position to {x: 0, y: 5, z: -10}
   const camera = new BABYLON.FreeCamera(
-    'camera1',
+    'camera',
     new BABYLON.Vector3(0, 5, -10),
     scene
   );
   // Target the camera to scene origin
   camera.setTarget(BABYLON.Vector3.Zero());
-  // Attach the camera to the canvas
-  // camera.attachControl(canvas, false);
 
   // Create a basic light, aiming 0, 1, 0 - meaning, to the sky
   new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(0, 1, 0), scene);
 
   // Create a built-in "sphere" shape using the SphereBuilder
   const sphere = BABYLON.MeshBuilder.CreateSphere(
-    'sphere1',
+    'sphere',
     {segments: 16, diameter: 0.6, sideOrientation: BABYLON.Mesh.FRONTSIDE},
     scene
   );
@@ -68,7 +67,7 @@ const createScene = function () {
 
   // Create a built-in "ground" shape;
   const ground = BABYLON.MeshBuilder.CreateGround(
-    'ground1',
+    'ground',
     {width: maze.size, height: maze.size, updatable: false},
     scene
   );
@@ -80,7 +79,7 @@ const createScene = function () {
   const walls = createWalls(maze, scene)!;
   const wallMaterial = new BABYLON.StandardMaterial('wall', scene);
   wallMaterial.diffuseTexture = new BABYLON.Texture(
-    Math.random() >= 0.5 ? brickImage : stoneImage,
+    [brickImage, stoneImage][random(0, 1)],
     scene
   );
   walls.material = wallMaterial;
