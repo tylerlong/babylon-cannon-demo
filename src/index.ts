@@ -5,6 +5,9 @@ import './index.css';
 
 import ballImage from './ball.png';
 import concreteImage from './concrete.png';
+import brickImage from './brick.png';
+import stoneImage from './stone.png';
+
 import {createWalls} from './utils';
 import Maze from './maze';
 
@@ -75,6 +78,12 @@ const createScene = function () {
 
   // Create walls
   const walls = createWalls(maze, scene)!;
+  const wallMaterial = new BABYLON.StandardMaterial('wall', scene);
+  wallMaterial.diffuseTexture = new BABYLON.Texture(
+    Math.random() >= 0.5 ? brickImage : stoneImage,
+    scene
+  );
+  walls.material = wallMaterial;
 
   sphere.physicsImpostor = new BABYLON.PhysicsImpostor(
     sphere,
