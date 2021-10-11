@@ -1,6 +1,9 @@
 import * as BABYLON from 'babylonjs';
 import * as CANNON from 'cannon-es';
 
+import ballImage from './ball.png';
+import concreteImage from './concrete.png';
+
 (global as any).CANNON = CANNON;
 
 // Create canvas
@@ -21,7 +24,7 @@ const createScene = function () {
   const scene = new BABYLON.Scene(engine);
 
   // Add physics engine
-  const gravityVector = new BABYLON.Vector3(0, -9.81, 0);
+  const gravityVector = new BABYLON.Vector3(0, -9.8, 0);
   const physicsPlugin = new BABYLON.CannonJSPlugin();
   scene.enablePhysics(gravityVector, physicsPlugin);
 
@@ -37,20 +40,19 @@ const createScene = function () {
   // camera.attachControl(canvas, false);
 
   // Create a basic light, aiming 0, 1, 0 - meaning, to the sky
-  const light = new BABYLON.HemisphericLight(
-    'light1',
-    new BABYLON.Vector3(0, 1, 0),
-    scene
-  );
+  new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(0, 1, 0), scene);
 
   // Create a built-in "sphere" shape using the SphereBuilder
   const sphere = BABYLON.MeshBuilder.CreateSphere(
     'sphere1',
-    {segments: 16, diameter: 2, sideOrientation: BABYLON.Mesh.FRONTSIDE},
+    {segments: 16, diameter: 1, sideOrientation: BABYLON.Mesh.FRONTSIDE},
     scene
   );
   // Move the sphere upward 1/2 of its height
   sphere.position.y = 2;
+  const sphereMaterial = new BABYLON.StandardMaterial('sphere', scene);
+  sphereMaterial.diffuseTexture = new BABYLON.Texture(ballImage, scene);
+  sphere.material = sphereMaterial;
 
   // Create a built-in "ground" shape;
   const ground = BABYLON.MeshBuilder.CreateGround(
@@ -58,6 +60,9 @@ const createScene = function () {
     {width: 6, height: 6, subdivisions: 2, updatable: false},
     scene
   );
+  const groundMaterial = new BABYLON.StandardMaterial('ground', scene);
+  groundMaterial.diffuseTexture = new BABYLON.Texture(concreteImage, scene);
+  ground.material = groundMaterial;
 
   sphere.physicsImpostor = new BABYLON.PhysicsImpostor(
     sphere,
@@ -76,24 +81,28 @@ const createScene = function () {
     const speed = 3;
     switch (event.key) {
       case 'ArrowLeft': {
+        event.preventDefault();
         sphere.physicsImpostor?.setLinearVelocity(
           new BABYLON.Vector3(-speed, 0, 0)
         );
         break;
       }
       case 'ArrowRight': {
+        event.preventDefault();
         sphere.physicsImpostor?.setLinearVelocity(
           new BABYLON.Vector3(speed, 0, 0)
         );
         break;
       }
       case 'ArrowUp': {
+        event.preventDefault();
         sphere.physicsImpostor?.setLinearVelocity(
           new BABYLON.Vector3(0, 0, speed)
         );
         break;
       }
       case 'ArrowDown': {
+        event.preventDefault();
         sphere.physicsImpostor?.setLinearVelocity(
           new BABYLON.Vector3(0, 0, -speed)
         );
