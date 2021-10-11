@@ -51,7 +51,7 @@ const createScene = function () {
   // Create a built-in "sphere" shape using the SphereBuilder
   const sphere = BABYLON.MeshBuilder.CreateSphere(
     'sphere1',
-    {segments: 16, diameter: 1, sideOrientation: BABYLON.Mesh.FRONTSIDE},
+    {segments: 16, diameter: 0.6, sideOrientation: BABYLON.Mesh.FRONTSIDE},
     scene
   );
   sphere.position = new BABYLON.Vector3(
@@ -74,7 +74,7 @@ const createScene = function () {
   ground.material = groundMaterial;
 
   // Create walls
-  createWalls(maze, scene);
+  const walls = createWalls(maze, scene)!;
 
   sphere.physicsImpostor = new BABYLON.PhysicsImpostor(
     sphere,
@@ -86,6 +86,12 @@ const createScene = function () {
     ground,
     BABYLON.PhysicsImpostor.BoxImpostor,
     {mass: 0, restitution: 0.9},
+    scene
+  );
+  walls.physicsImpostor = new BABYLON.PhysicsImpostor(
+    walls,
+    BABYLON.PhysicsImpostor.MeshImpostor,
+    {mass: 0, restitution: 0.5},
     scene
   );
 

@@ -2,10 +2,11 @@ import * as BABYLON from 'babylonjs';
 import Maze from './maze';
 
 export const createWalls = (maze: Maze, scene: BABYLON.Scene) => {
-  for (let z = 0; z < maze.size; z++) {
-    for (let x = 0; x < maze.size; x++) {
+  const walls: BABYLON.Mesh[] = [];
+  for (let x = 0; x < maze.size; x++) {
+    for (let z = 0; z < maze.size; z++) {
       if (maze.map[x][z] === 1) {
-        createWall(
+        const wall = createWall(
           {
             id: `${x}-${z}`,
             x: x - (maze.size - 1) / 2,
@@ -13,13 +14,15 @@ export const createWalls = (maze: Maze, scene: BABYLON.Scene) => {
           },
           scene
         );
+        walls.push(wall);
       }
     }
   }
+  return BABYLON.Mesh.MergeMeshes(walls);
 };
 
 const createWall = (
-  options: {id: string; x: number; z: number},
+  options: {id: string; z: number; x: number},
   scene: BABYLON.Scene
 ) => {
   const wall = BABYLON.MeshBuilder.CreateBox(
@@ -29,7 +32,8 @@ const createWall = (
     },
     scene
   );
-  wall.position.x += options.x;
-  wall.position.y += 0.5;
   wall.position.z += options.z;
+  wall.position.y += 0.5;
+  wall.position.x += options.x;
+  return wall;
 };

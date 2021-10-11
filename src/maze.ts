@@ -1,8 +1,8 @@
 import {shuffle} from 'lodash';
 
 type MazeLocation = {
-  z: number;
   x: number;
+  z: number;
 };
 
 type Visited = {[key: number]: {[key: number]: boolean}};
@@ -21,10 +21,10 @@ class Maze {
     }
     this.size = size;
 
-    for (let z = 0; z < size; z++) {
-      this.map[z] = [];
-      for (let x = 0; x < size; x++) {
-        this.map[z][x] = z % 2 === 1 && x % 2 === 1 ? 0 : 1;
+    for (let x = 0; x < size; x++) {
+      this.map[x] = [];
+      for (let z = 0; z < size; z++) {
+        this.map[x][z] = x % 2 === 1 && z % 2 === 1 ? 0 : 1;
       }
     }
 
@@ -32,54 +32,54 @@ class Maze {
       x: size - 1,
       z: size - 2,
     };
-    this.map[this.pickup.z][this.pickup.x] = 0;
+    this.map[this.pickup.x][this.pickup.z] = 0;
 
     this.player = {
       x: 1,
       z: 1,
     };
 
-    for (let z = 0; z < size; z++) {
-      if (z % 2 === 1) {
-        this.visited[z] = {};
-        for (let x = 0; x < size; x++) {
-          if (x % 2 === 1) {
-            this.visited[z][x] = false;
+    for (let x = 0; x < size; x++) {
+      if (x % 2 === 1) {
+        this.visited[x] = {};
+        for (let z = 0; z < size; z++) {
+          if (z % 2 === 1) {
+            this.visited[x][z] = false;
           }
         }
       }
     }
 
-    this.visit(this.player.z, this.player.x);
+    this.visit(this.player.x, this.player.z);
   }
 
-  visit(z: number, x: number) {
-    this.visited[z][x] = true;
-    const neighbors = this.findNeighbors(z, x);
+  visit(x: number, z: number) {
+    this.visited[x][z] = true;
+    const neighbors = this.findNeighbors(x, z);
     for (const neighbor of neighbors) {
-      if (!this.visited[neighbor.z][neighbor.x]) {
-        this.map[(z + neighbor.z) / 2][(x + neighbor.x) / 2] = 0;
-        this.visit(neighbor.z, neighbor.x);
+      if (!this.visited[neighbor.x][neighbor.z]) {
+        this.map[(x + neighbor.x) / 2][(z + neighbor.z) / 2] = 0;
+        this.visit(neighbor.x, neighbor.z);
       }
     }
   }
 
-  findNeighbors(z: number, x: number): MazeLocation[] {
-    if (this.map[z][x] !== 0) {
+  findNeighbors(x: number, z: number): MazeLocation[] {
+    if (this.map[x][z] !== 0) {
       return [];
     }
     const result: MazeLocation[] = [];
-    if (z - 2 > 0) {
-      result.push({z: z - 2, x});
-    }
     if (x - 2 > 0) {
-      result.push({z, x: x - 2});
+      result.push({x: x - 2, z});
     }
-    if (z + 2 < this.size) {
-      result.push({z: z + 2, x});
+    if (z - 2 > 0) {
+      result.push({x, z: z - 2});
     }
     if (x + 2 < this.size) {
-      result.push({z, x: x + 2});
+      result.push({x: x + 2, z});
+    }
+    if (z + 2 < this.size) {
+      result.push({x, z: z + 2});
     }
     return shuffle(result);
   }
