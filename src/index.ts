@@ -1,13 +1,16 @@
-import './index.css';
-
 import * as BABYLON from 'babylonjs';
 import * as CANNON from 'cannon-es';
+
+import './index.css';
 
 import ballImage from './ball.png';
 import concreteImage from './concrete.png';
 import {createWalls} from './utils';
+import Maze from './maze';
 
 (global as unknown as {CANNON: typeof CANNON}).CANNON = CANNON;
+
+const maze = new Maze(11);
 
 // Create canvas
 const canvas = document.createElement('canvas');
@@ -51,8 +54,11 @@ const createScene = function () {
     {segments: 16, diameter: 1, sideOrientation: BABYLON.Mesh.FRONTSIDE},
     scene
   );
-  // Move the sphere upward 1/2 of its height
-  sphere.position.y = 2;
+  sphere.position = new BABYLON.Vector3(
+    maze.player.x - (maze.size - 1) / 2,
+    2,
+    maze.player.z - (maze.size - 1) / 2
+  );
   const sphereMaterial = new BABYLON.StandardMaterial('sphere', scene);
   sphereMaterial.diffuseTexture = new BABYLON.Texture(ballImage, scene);
   sphere.material = sphereMaterial;
@@ -60,7 +66,7 @@ const createScene = function () {
   // Create a built-in "ground" shape;
   const ground = BABYLON.MeshBuilder.CreateGround(
     'ground1',
-    {width: 6, height: 6, updatable: false},
+    {width: maze.size, height: maze.size, updatable: false},
     scene
   );
   const groundMaterial = new BABYLON.StandardMaterial('ground', scene);
@@ -68,7 +74,7 @@ const createScene = function () {
   ground.material = groundMaterial;
 
   // Create walls
-  createWalls(scene);
+  createWalls(maze, scene);
 
   sphere.physicsImpostor = new BABYLON.PhysicsImpostor(
     sphere,
