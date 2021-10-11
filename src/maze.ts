@@ -30,16 +30,13 @@ class Maze {
 
     this.pickup = {
       x: size - 1,
-      z: Math.random() >= 0.5 ? 1 : size - 2,
+      z: size - 2,
     };
     this.map[this.pickup.z][this.pickup.x] = 0;
 
     this.player = {
       x: 1,
-      z:
-        this.map[(size - 1) / 2][1] === 0
-          ? (size - 1) / 2
-          : (size - 1) / 2 + (Math.random() >= 0.5 ? 1 : -1),
+      z: 1,
     };
 
     for (let z = 0; z < size; z++) {
