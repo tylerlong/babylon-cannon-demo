@@ -2,13 +2,16 @@
   "license": "MIT",
   "scripts": {
     "serve": "webpack serve",
-    "release": "webpack --progress"
+    "release": "webpack --progress",
+    "test": "ts-node src/test.ts"
   },
   "dependencies": {
     "babylonjs": "5.0.0-alpha.50",
-    "cannon-es": "^0.18.0"
+    "cannon-es": "^0.18.0",
+    "lodash": "^4.17.21"
   },
   "devDependencies": {
+    "@types/lodash": "^4.14.175",
     "@types/node": "^16.10.3",
     "css-loader": "^6.4.0",
     "file-loader": "^6.2.0",
