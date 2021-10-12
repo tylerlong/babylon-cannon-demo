@@ -1,7 +1,7 @@
 import * as BABYLON from 'babylonjs';
 
 import Maze from './maze';
-import {clinkSound, dingSound} from './sounds';
+import {clinkSound, dingSound, rollingSound} from './sounds';
 import {createWalls} from './meshes/walls';
 import {createGround} from './meshes/ground';
 import {createPickup} from './meshes/pickup';
@@ -59,6 +59,19 @@ class Scene {
         callback();
       }
     );
+
+    rollingSound.play();
+  }
+
+  render() {
+    this.camera.position.x = this.ball.position.x;
+    this.camera.position.z = this.ball.position.z - 2;
+    this.camera.setTarget(this.ball.position);
+    this.light.position.x = this.ball.position.x;
+    this.light.position.z = this.ball.position.z - 2;
+    const v = this.ball.physicsImpostor!.getLinearVelocity()!;
+    rollingSound.volume(Math.max(Math.abs(v.x), Math.abs(v.z)) / 6);
+    this.scene.render();
   }
 }
 
