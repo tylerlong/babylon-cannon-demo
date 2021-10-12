@@ -39,8 +39,6 @@ const camera = new BABYLON.FreeCamera(
   new BABYLON.Vector3(0, 5, -10),
   scene
 );
-// Target the camera to scene origin
-camera.setTarget(BABYLON.Vector3.Zero());
 
 // Create a basic light, aiming 0, 1, 0 - meaning, to the sky
 new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(0, 1, 0), scene);
@@ -48,12 +46,12 @@ new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(0, 1, 0), scene);
 // Create a built-in "sphere" shape using the SphereBuilder
 const sphere = BABYLON.MeshBuilder.CreateSphere(
   'sphere',
-  {segments: 16, diameter: 0.6, sideOrientation: BABYLON.Mesh.FRONTSIDE},
+  {segments: 16, diameter: 0.4, sideOrientation: BABYLON.Mesh.FRONTSIDE},
   scene
 );
 sphere.position = new BABYLON.Vector3(
   maze.player.x - (maze.size - 1) / 2,
-  2,
+  0.2,
   maze.player.z - (maze.size - 1) / 2
 );
 const sphereMaterial = new BABYLON.StandardMaterial('sphere', scene);
@@ -137,7 +135,8 @@ window.addEventListener('keydown', event => {
 // run the render loop
 engine.runRenderLoop(() => {
   camera.position.x = sphere.position.x;
-  camera.position.z = sphere.position.z - 5;
+  camera.position.z = sphere.position.z - 2;
+  camera.setTarget(sphere.position);
   scene.render();
 });
 
