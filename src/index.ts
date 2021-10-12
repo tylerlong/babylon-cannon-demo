@@ -22,7 +22,7 @@ const rolling = new Howl({
 });
 rolling.play();
 
-const maze = new Maze(21);
+const maze = new Maze(11);
 
 // Create canvas
 const canvas = document.createElement('canvas');
@@ -157,6 +157,9 @@ engine.runRenderLoop(() => {
   camera.setTarget(sphere.position);
   const v = sphere.physicsImpostor!.getLinearVelocity()!;
   rolling.volume(Math.max(Math.abs(v.x), Math.abs(v.z)) / speed / 2);
+  if (v.y < 0) {
+    rolling.volume(0); // fall
+  }
   scene.render();
 });
 
