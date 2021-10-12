@@ -28,7 +28,7 @@ export const createWalls = (maze: Maze, scene: BABYLON.Scene) => {
   walls.physicsImpostor = new BABYLON.PhysicsImpostor(
     walls,
     BABYLON.PhysicsImpostor.MeshImpostor,
-    {mass: 0, restitution: 0},
+    {mass: 0},
     scene
   );
   return walls;

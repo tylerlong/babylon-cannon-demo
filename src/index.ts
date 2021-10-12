@@ -2,24 +2,16 @@ import * as CANNON from 'cannon-es';
 
 import './index.css';
 
-import Scene from './scene';
-import Engine from './engine';
+import Game from './game';
 
 (global as unknown as {CANNON: typeof CANNON}).CANNON = CANNON;
 
-let scene: Scene;
-
-let mazeSize = 5;
-let engine: Engine;
+let mazeSize = 3;
+let game: Game;
 const newLevel = () => {
-  if (engine) {
-    engine.dispose();
-  }
-  engine = new Engine();
-  scene = new Scene(engine.engine, mazeSize, newLevel);
+  game?.dispose();
+  game = new Game(mazeSize);
   mazeSize += 2;
-  engine.engine.runRenderLoop(() => {
-    scene.render();
-  });
+  game.once('exit', () => newLevel());
 };
 newLevel();

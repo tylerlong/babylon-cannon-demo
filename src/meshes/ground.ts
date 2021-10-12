@@ -20,7 +20,7 @@ export const createGround = (maze: Maze, scene: BABYLON.Scene) => {
   ground.physicsImpostor = new BABYLON.PhysicsImpostor(
     ground,
     BABYLON.PhysicsImpostor.BoxImpostor,
-    {mass: 0, restitution: 0.9, friction: 1},
+    {mass: 0, friction: 1},
     scene
   );
   return ground;

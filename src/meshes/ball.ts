@@ -21,7 +21,7 @@ export const createBall = (maze: Maze, scene: BABYLON.Scene) => {
   ball.physicsImpostor = new BABYLON.PhysicsImpostor(
     ball,
     BABYLON.PhysicsImpostor.SphereImpostor,
-    {mass: 1, restitution: 0.9, friction: 1},
+    {mass: 1, friction: 1},
     scene
   );
 

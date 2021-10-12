@@ -22,7 +22,7 @@ export const createPickup = (maze: Maze, scene: BABYLON.Scene) => {
   pickup.physicsImpostor = new BABYLON.PhysicsImpostor(
     pickup,
     BABYLON.PhysicsImpostor.BoxImpostor,
-    {mass: 0, restitution: 0},
+    {mass: 0},
     scene
   );
   return pickup;

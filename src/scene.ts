@@ -19,12 +19,10 @@ class Scene {
     this.maze = new Maze(mazeSize);
     this.scene = new BABYLON.Scene(engine);
 
-    // Add physics engine
     const gravityVector = new BABYLON.Vector3(0, -9.8, 0);
     const physicsPlugin = new BABYLON.CannonJSPlugin();
     this.scene.enablePhysics(gravityVector, physicsPlugin);
 
-    // Create a FreeCamera, and set its position to {x: 0, y: 5, z: -10}
     this.camera = new BABYLON.FreeCamera(
       uuid(),
       new BABYLON.Vector3(0, 5, -10),
@@ -72,6 +70,10 @@ class Scene {
     const v = this.ball.physicsImpostor!.getLinearVelocity()!;
     rollingSound.volume(Math.max(Math.abs(v.x), Math.abs(v.z)) / 6);
     this.scene.render();
+  }
+
+  dispose() {
+    this.scene.dispose();
   }
 }
 
