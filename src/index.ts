@@ -7,20 +7,26 @@ import './index.css';
 import ballImage from './tile.jpeg';
 import concreteImage from './concrete.png';
 import stoneImage from './stone.png';
-import rollingSound from './rolling.wav';
+import rollingWav from './rolling.wav';
+import clinkWav from './clink.wav';
 
 import {createWalls} from './utils';
 import Maze from './maze';
 
 (global as unknown as {CANNON: typeof CANNON}).CANNON = CANNON;
 
-const rolling = new Howl({
-  src: rollingSound,
+const rollingSound = new Howl({
+  src: rollingWav,
   volume: 0,
   loop: true,
   rate: 4.0,
 });
-rolling.play();
+rollingSound.play();
+
+const clinkSound = new Howl({
+  src: clinkWav,
+  volume: 1 / 16,
+});
 
 const maze = new Maze(11);
 
@@ -111,6 +117,10 @@ walls.physicsImpostor = new BABYLON.PhysicsImpostor(
   scene
 );
 
+sphere.physicsImpostor.registerOnPhysicsCollide(walls.physicsImpostor, () => {
+  clinkSound.play();
+});
+
 const speed = 3;
 window.addEventListener('keydown', event => {
   switch (event.key) {
@@ -156,9 +166,9 @@ engine.runRenderLoop(() => {
   light.position.z = sphere.position.z - 2;
   camera.setTarget(sphere.position);
   const v = sphere.physicsImpostor!.getLinearVelocity()!;
-  rolling.volume(Math.max(Math.abs(v.x), Math.abs(v.z)) / speed / 2);
+  rollingSound.volume(Math.max(Math.abs(v.x), Math.abs(v.z)) / speed / 2);
   if (v.y < 0) {
-    rolling.volume(0); // fall
+    rollingSound.volume(0); // fall
   }
   scene.render();
 });
