@@ -22,7 +22,7 @@ const config: Configuration = {
         },
       },
       {
-        test: /\.(?:png|jpe?g)$/i,
+        test: /\.(?:png|jpe?g|wav)$/i,
         use: 'file-loader',
       },
       {

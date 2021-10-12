@@ -1,16 +1,26 @@
 import * as BABYLON from 'babylonjs';
 import * as CANNON from 'cannon-es';
+import {Howl} from 'howler';
 
 import './index.css';
 
-import ballImage from './ball.png';
+import ballImage from './tile.jpeg';
 import concreteImage from './concrete.png';
 import stoneImage from './stone.png';
+import rollingSound from './rolling.wav';
 
 import {createWalls} from './utils';
 import Maze from './maze';
 
 (global as unknown as {CANNON: typeof CANNON}).CANNON = CANNON;
+
+const rolling = new Howl({
+  src: rollingSound,
+  volume: 0,
+  loop: true,
+  rate: 4.0,
+});
+rolling.play();
 
 const maze = new Maze(21);
 
@@ -101,8 +111,8 @@ walls.physicsImpostor = new BABYLON.PhysicsImpostor(
   scene
 );
 
+const speed = 3;
 window.addEventListener('keydown', event => {
-  const speed = 3;
   switch (event.key) {
     case 'ArrowLeft': {
       event.preventDefault();
@@ -145,6 +155,8 @@ engine.runRenderLoop(() => {
   light.position.x = sphere.position.x;
   light.position.z = sphere.position.z - 2;
   camera.setTarget(sphere.position);
+  const v = sphere.physicsImpostor!.getLinearVelocity()!;
+  rolling.volume(Math.max(Math.abs(v.x), Math.abs(v.z)) / speed / 2);
   scene.render();
 });
 

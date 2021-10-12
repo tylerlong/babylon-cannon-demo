@@ -8,9 +8,11 @@
   "dependencies": {
     "babylonjs": "5.0.0-alpha.50",
     "cannon-es": "^0.18.0",
+    "howler": "^2.2.3",
     "lodash": "^4.17.21"
   },
   "devDependencies": {
+    "@types/howler": "^2.2.4",
     "@types/lodash": "^4.14.175",
     "@types/node": "^16.10.3",
     "css-loader": "^6.4.0",
