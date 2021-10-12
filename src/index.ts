@@ -2,9 +2,8 @@ import * as BABYLON from 'babylonjs';
 import * as CANNON from 'cannon-es';
 import {Howl} from 'howler';
 
+import Maze from './maze';
 import './index.css';
-
-import ballImage from './images/tile.jpeg';
 
 import rollingWav from './sounds/rolling.wav';
 import clinkWav from './sounds/clink.wav';
@@ -12,7 +11,8 @@ import dingWav from './sounds/ding.wav';
 
 import {createWalls} from './meshes/walls';
 import {createGround} from './meshes/ground';
-import Maze from './maze';
+import {createPickup} from './meshes/pickup';
+import {createBall} from './meshes/ball';
 
 (global as unknown as {CANNON: typeof CANNON}).CANNON = CANNON;
 
@@ -71,58 +71,15 @@ const light = new BABYLON.SpotLight(
   scene
 );
 
-// Create a built-in "sphere" shape using the SphereBuilder
-const sphere = BABYLON.MeshBuilder.CreateSphere(
-  'sphere',
-  {segments: 16, diameter: 0.4, sideOrientation: BABYLON.Mesh.FRONTSIDE},
-  scene
-);
-sphere.position = new BABYLON.Vector3(
-  maze.player.x - (maze.size - 1) / 2,
-  0.2,
-  maze.player.z - (maze.size - 1) / 2
-);
-const sphereMaterial = new BABYLON.StandardMaterial('sphere', scene);
-sphereMaterial.diffuseTexture = new BABYLON.Texture(ballImage, scene);
-sphere.material = sphereMaterial;
-
 const ground = createGround(maze, scene);
 const walls = createWalls(maze, scene)!;
+const pickup = createPickup(maze, scene);
+const ball = createBall(maze, scene);
 
-// Create invisible pickup
-const pickup = BABYLON.MeshBuilder.CreateBox(
-  'pickup',
-  {
-    size: 1,
-  },
-  scene
-);
-pickup.position = new BABYLON.Vector3(
-  maze.pickup.x - (maze.size - 1) / 2 + 1,
-  0.5,
-  maze.pickup.z - (maze.size - 1) / 2
-);
-const pickupMaterial = new BABYLON.StandardMaterial('pickup', scene);
-pickupMaterial.alpha = 0;
-pickup.material = pickupMaterial;
-
-sphere.physicsImpostor = new BABYLON.PhysicsImpostor(
-  sphere,
-  BABYLON.PhysicsImpostor.SphereImpostor,
-  {mass: 1, restitution: 0.9, friction: 1},
-  scene
-);
-pickup.physicsImpostor = new BABYLON.PhysicsImpostor(
-  pickup,
-  BABYLON.PhysicsImpostor.BoxImpostor,
-  {mass: 0, restitution: 0},
-  scene
-);
-
-sphere.physicsImpostor.registerOnPhysicsCollide(walls.physicsImpostor!, () => {
+ball.physicsImpostor!.registerOnPhysicsCollide(walls.physicsImpostor!, () => {
   clinkSound.play();
 });
-sphere.physicsImpostor.registerOnPhysicsCollide(pickup.physicsImpostor, () => {
+ball.physicsImpostor!.registerOnPhysicsCollide(pickup.physicsImpostor!, () => {
   dingSound.play();
 });
 
@@ -131,28 +88,24 @@ window.addEventListener('keydown', event => {
   switch (event.key) {
     case 'ArrowLeft': {
       event.preventDefault();
-      sphere.physicsImpostor?.setLinearVelocity(
+      ball.physicsImpostor?.setLinearVelocity(
         new BABYLON.Vector3(-speed, 0, 0)
       );
       break;
     }
     case 'ArrowRight': {
       event.preventDefault();
-      sphere.physicsImpostor?.setLinearVelocity(
-        new BABYLON.Vector3(speed, 0, 0)
-      );
+      ball.physicsImpostor?.setLinearVelocity(new BABYLON.Vector3(speed, 0, 0));
       break;
     }
     case 'ArrowUp': {
       event.preventDefault();
-      sphere.physicsImpostor?.setLinearVelocity(
-        new BABYLON.Vector3(0, 0, speed)
-      );
+      ball.physicsImpostor?.setLinearVelocity(new BABYLON.Vector3(0, 0, speed));
       break;
     }
     case 'ArrowDown': {
       event.preventDefault();
-      sphere.physicsImpostor?.setLinearVelocity(
+      ball.physicsImpostor?.setLinearVelocity(
         new BABYLON.Vector3(0, 0, -speed)
       );
       break;
@@ -165,12 +118,12 @@ window.addEventListener('keydown', event => {
 
 // run the render loop
 engine.runRenderLoop(() => {
-  camera.position.x = sphere.position.x;
-  camera.position.z = sphere.position.z - 2;
-  light.position.x = sphere.position.x;
-  light.position.z = sphere.position.z - 2;
-  camera.setTarget(sphere.position);
-  const v = sphere.physicsImpostor!.getLinearVelocity()!;
+  camera.position.x = ball.position.x;
+  camera.position.z = ball.position.z - 2;
+  light.position.x = ball.position.x;
+  light.position.z = ball.position.z - 2;
+  camera.setTarget(ball.position);
+  const v = ball.physicsImpostor!.getLinearVelocity()!;
   rollingSound.volume(Math.max(Math.abs(v.x), Math.abs(v.z)) / speed / 2);
   scene.render();
 });
