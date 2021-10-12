@@ -2,6 +2,7 @@ import * as BABYLON from 'babylonjs';
 
 import Maze from '../maze';
 import stoneImage from '../images/stone.png';
+import {uuid} from '../utils';
 
 export const createWalls = (maze: Maze, scene: BABYLON.Scene) => {
   const boxes: BABYLON.Mesh[] = [];
@@ -21,7 +22,7 @@ export const createWalls = (maze: Maze, scene: BABYLON.Scene) => {
     }
   }
   const walls = BABYLON.Mesh.MergeMeshes(boxes)!;
-  const wallMaterial = new BABYLON.StandardMaterial('wall', scene);
+  const wallMaterial = new BABYLON.StandardMaterial(uuid(), scene);
   wallMaterial.diffuseTexture = new BABYLON.Texture(stoneImage, scene);
   walls.material = wallMaterial;
   walls.physicsImpostor = new BABYLON.PhysicsImpostor(
@@ -38,7 +39,7 @@ const createWall = (
   scene: BABYLON.Scene
 ) => {
   const wall = BABYLON.MeshBuilder.CreateBox(
-    `wall${options.id}`,
+    uuid(),
     {
       size: 1,
     },

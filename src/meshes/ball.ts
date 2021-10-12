@@ -2,10 +2,11 @@ import * as BABYLON from 'babylonjs';
 
 import Maze from '../maze';
 import ballImage from '../images/tile.jpeg';
+import {uuid} from '../utils';
 
 export const createBall = (maze: Maze, scene: BABYLON.Scene) => {
   const ball = BABYLON.MeshBuilder.CreateSphere(
-    'ball',
+    uuid(),
     {segments: 16, diameter: 0.4, sideOrientation: BABYLON.Mesh.FRONTSIDE},
     scene
   );
@@ -14,7 +15,7 @@ export const createBall = (maze: Maze, scene: BABYLON.Scene) => {
     0.2,
     maze.player.z - (maze.size - 1) / 2
   );
-  const ballMaterial = new BABYLON.StandardMaterial('ball', scene);
+  const ballMaterial = new BABYLON.StandardMaterial(uuid(), scene);
   ballMaterial.diffuseTexture = new BABYLON.Texture(ballImage, scene);
   ball.material = ballMaterial;
   ball.physicsImpostor = new BABYLON.PhysicsImpostor(

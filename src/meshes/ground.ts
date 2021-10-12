@@ -2,14 +2,15 @@ import * as BABYLON from 'babylonjs';
 
 import Maze from '../maze';
 import concreteImage from '../images/concrete.png';
+import {uuid} from '../utils';
 
 export const createGround = (maze: Maze, scene: BABYLON.Scene) => {
   const ground = BABYLON.MeshBuilder.CreateGround(
-    'ground',
+    uuid(),
     {width: maze.size, height: maze.size, updatable: false},
     scene
   );
-  const groundMaterial = new BABYLON.StandardMaterial('ground', scene);
+  const groundMaterial = new BABYLON.StandardMaterial(uuid(), scene);
   groundMaterial.diffuseTexture = new BABYLON.Texture(concreteImage, scene);
   (groundMaterial.diffuseTexture as BABYLON.Texture).uScale =
     (maze.size - 1) / 2;

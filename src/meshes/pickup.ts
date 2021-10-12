@@ -1,10 +1,11 @@
 import * as BABYLON from 'babylonjs';
 
 import Maze from '../maze';
+import {uuid} from '../utils';
 
 export const createPickup = (maze: Maze, scene: BABYLON.Scene) => {
   const pickup = BABYLON.MeshBuilder.CreateBox(
-    'pickup',
+    uuid(),
     {
       size: 1,
     },
@@ -15,7 +16,7 @@ export const createPickup = (maze: Maze, scene: BABYLON.Scene) => {
     0.5,
     maze.pickup.z - (maze.size - 1) / 2
   );
-  const pickupMaterial = new BABYLON.StandardMaterial('pickup', scene);
+  const pickupMaterial = new BABYLON.StandardMaterial(uuid(), scene);
   pickupMaterial.alpha = 0;
   pickup.material = pickupMaterial;
   pickup.physicsImpostor = new BABYLON.PhysicsImpostor(

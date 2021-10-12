@@ -5,15 +5,17 @@
     "release": "webpack --progress"
   },
   "dependencies": {
-    "babylonjs": "5.0.0-alpha.50",
+    "babylonjs": "5.0.0-alpha.52",
     "cannon-es": "^0.18.0",
     "howler": "^2.2.3",
+    "hyperid": "^2.3.1",
     "lodash": "^4.17.21"
   },
   "devDependencies": {
     "@types/howler": "^2.2.4",
     "@types/lodash": "^4.14.175",
     "@types/node": "^16.10.3",
+    "buffer": "^6.0.3",
     "css-loader": "^6.4.0",
     "file-loader": "^6.2.0",
     "gts": "^3.1.0",
