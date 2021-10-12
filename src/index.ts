@@ -12,7 +12,7 @@ import Maze from './maze';
 
 (global as unknown as {CANNON: typeof CANNON}).CANNON = CANNON;
 
-const maze = new Maze(11);
+const maze = new Maze(21);
 
 // Create canvas
 const canvas = document.createElement('canvas');
@@ -40,8 +40,14 @@ const camera = new BABYLON.FreeCamera(
   scene
 );
 
-// Create a basic light, aiming 0, 1, 0 - meaning, to the sky
-new BABYLON.HemisphericLight('light1', new BABYLON.Vector3(0, 1, 0), scene);
+const light = new BABYLON.SpotLight(
+  'light',
+  new BABYLON.Vector3(0, 4, 0), // x, z will be override anyway
+  new BABYLON.Vector3(0, -1, 0.5),
+  Math.PI / 3,
+  30,
+  scene
+);
 
 // Create a built-in "sphere" shape using the SphereBuilder
 const sphere = BABYLON.MeshBuilder.CreateSphere(
@@ -136,6 +142,8 @@ window.addEventListener('keydown', event => {
 engine.runRenderLoop(() => {
   camera.position.x = sphere.position.x;
   camera.position.z = sphere.position.z - 2;
+  light.position.x = sphere.position.x;
+  light.position.z = sphere.position.z - 2;
   camera.setTarget(sphere.position);
   scene.render();
 });
