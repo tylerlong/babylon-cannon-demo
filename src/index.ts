@@ -31,10 +31,10 @@ const clinkSound = new Howl({
 
 const dingSound = new Howl({
   src: dingWav,
-  volume: 1 / 8,
+  volume: 1,
 });
 
-const maze = new Maze(11);
+const maze = new Maze(5);
 
 // Create canvas
 const canvas = document.createElement('canvas');
@@ -104,16 +104,33 @@ const wallMaterial = new BABYLON.StandardMaterial('wall', scene);
 wallMaterial.diffuseTexture = new BABYLON.Texture(stoneImage, scene);
 walls.material = wallMaterial;
 
+// Create invisible pickup
+const pickup = BABYLON.MeshBuilder.CreateBox(
+  'pickup',
+  {
+    size: 1,
+  },
+  scene
+);
+pickup.position = new BABYLON.Vector3(
+  maze.pickup.x - (maze.size - 1) / 2 + 1,
+  0.5,
+  maze.pickup.z - (maze.size - 1) / 2
+);
+const pickupMaterial = new BABYLON.StandardMaterial('pickup', scene);
+pickupMaterial.alpha = 0;
+pickup.material = pickupMaterial;
+
 sphere.physicsImpostor = new BABYLON.PhysicsImpostor(
   sphere,
   BABYLON.PhysicsImpostor.SphereImpostor,
-  {mass: 1, restitution: 0.9},
+  {mass: 1, restitution: 0.9, friction: 1},
   scene
 );
 ground.physicsImpostor = new BABYLON.PhysicsImpostor(
   ground,
   BABYLON.PhysicsImpostor.BoxImpostor,
-  {mass: 0, restitution: 0.9},
+  {mass: 0, restitution: 0.9, friction: 1},
   scene
 );
 walls.physicsImpostor = new BABYLON.PhysicsImpostor(
@@ -122,9 +139,18 @@ walls.physicsImpostor = new BABYLON.PhysicsImpostor(
   {mass: 0, restitution: 0},
   scene
 );
+pickup.physicsImpostor = new BABYLON.PhysicsImpostor(
+  pickup,
+  BABYLON.PhysicsImpostor.BoxImpostor,
+  {mass: 0, restitution: 0},
+  scene
+);
 
 sphere.physicsImpostor.registerOnPhysicsCollide(walls.physicsImpostor, () => {
   clinkSound.play();
+});
+sphere.physicsImpostor.registerOnPhysicsCollide(pickup.physicsImpostor, () => {
+  dingSound.play();
 });
 
 const speed = 3;
