@@ -14,6 +14,9 @@ class Scene {
   camera: BABYLON.FreeCamera;
   light: BABYLON.SpotLight;
   ball: BABYLON.Mesh;
+  ground: BABYLON.Mesh;
+  walls: BABYLON.Mesh;
+  pickup: BABYLON.Mesh;
 
   constructor(engine: BABYLON.Engine, mazeSize: number, callback: () => void) {
     this.maze = new Maze(mazeSize);
@@ -38,20 +41,20 @@ class Scene {
       this.scene
     );
 
-    createGround(this.maze, this.scene);
-    const walls = createWalls(this.maze, this.scene)!;
-    const pickup = createPickup(this.maze, this.scene);
+    this.ground = createGround(this.maze, this.scene);
+    this.walls = createWalls(this.maze, this.scene)!;
+    this.pickup = createPickup(this.maze, this.scene);
     this.ball = createBall(this.maze, this.scene);
 
     this.ball.physicsImpostor!.registerOnPhysicsCollide(
-      walls.physicsImpostor!,
+      this.walls.physicsImpostor!,
       () => {
         clinkSound.play();
       }
     );
 
     this.ball.physicsImpostor!.registerOnPhysicsCollide(
-      pickup.physicsImpostor!,
+      this.pickup.physicsImpostor!,
       () => {
         dingSound.play();
         callback();
@@ -73,6 +76,13 @@ class Scene {
   }
 
   dispose() {
+    rollingSound.stop();
+    this.ball.dispose();
+    this.camera.dispose();
+    this.light.dispose();
+    this.ground.dispose();
+    this.walls.dispose();
+    this.pickup.dispose();
     this.scene.dispose();
   }
 }
