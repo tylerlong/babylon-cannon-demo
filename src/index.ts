@@ -4,14 +4,14 @@ import {Howl} from 'howler';
 
 import './index.css';
 
-import ballImage from './tile.jpeg';
-import concreteImage from './concrete.png';
-import stoneImage from './stone.png';
-import rollingWav from './rolling.wav';
-import clinkWav from './clink.wav';
-import dingWav from './ding.wav';
+import ballImage from './images/tile.jpeg';
 
-import {createWalls} from './utils';
+import rollingWav from './sounds/rolling.wav';
+import clinkWav from './sounds/clink.wav';
+import dingWav from './sounds/ding.wav';
+
+import {createWalls} from './meshes/walls';
+import {createGround} from './meshes/ground';
 import Maze from './maze';
 
 (global as unknown as {CANNON: typeof CANNON}).CANNON = CANNON;
@@ -86,23 +86,8 @@ const sphereMaterial = new BABYLON.StandardMaterial('sphere', scene);
 sphereMaterial.diffuseTexture = new BABYLON.Texture(ballImage, scene);
 sphere.material = sphereMaterial;
 
-// Create a built-in "ground" shape;
-const ground = BABYLON.MeshBuilder.CreateGround(
-  'ground',
-  {width: maze.size, height: maze.size, updatable: false},
-  scene
-);
-const groundMaterial = new BABYLON.StandardMaterial('ground', scene);
-groundMaterial.diffuseTexture = new BABYLON.Texture(concreteImage, scene);
-(groundMaterial.diffuseTexture as BABYLON.Texture).uScale = (maze.size - 1) / 2;
-(groundMaterial.diffuseTexture as BABYLON.Texture).vScale = (maze.size - 1) / 2;
-ground.material = groundMaterial;
-
-// Create walls
+const ground = createGround(maze, scene);
 const walls = createWalls(maze, scene)!;
-const wallMaterial = new BABYLON.StandardMaterial('wall', scene);
-wallMaterial.diffuseTexture = new BABYLON.Texture(stoneImage, scene);
-walls.material = wallMaterial;
 
 // Create invisible pickup
 const pickup = BABYLON.MeshBuilder.CreateBox(
@@ -127,18 +112,6 @@ sphere.physicsImpostor = new BABYLON.PhysicsImpostor(
   {mass: 1, restitution: 0.9, friction: 1},
   scene
 );
-ground.physicsImpostor = new BABYLON.PhysicsImpostor(
-  ground,
-  BABYLON.PhysicsImpostor.BoxImpostor,
-  {mass: 0, restitution: 0.9, friction: 1},
-  scene
-);
-walls.physicsImpostor = new BABYLON.PhysicsImpostor(
-  walls,
-  BABYLON.PhysicsImpostor.MeshImpostor,
-  {mass: 0, restitution: 0},
-  scene
-);
 pickup.physicsImpostor = new BABYLON.PhysicsImpostor(
   pickup,
   BABYLON.PhysicsImpostor.BoxImpostor,
@@ -146,7 +119,7 @@ pickup.physicsImpostor = new BABYLON.PhysicsImpostor(
   scene
 );
 
-sphere.physicsImpostor.registerOnPhysicsCollide(walls.physicsImpostor, () => {
+sphere.physicsImpostor.registerOnPhysicsCollide(walls.physicsImpostor!, () => {
   clinkSound.play();
 });
 sphere.physicsImpostor.registerOnPhysicsCollide(pickup.physicsImpostor, () => {

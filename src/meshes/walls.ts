@@ -1,8 +1,10 @@
 import * as BABYLON from 'babylonjs';
-import Maze from './maze';
+
+import Maze from '../maze';
+import stoneImage from '../images/stone.png';
 
 export const createWalls = (maze: Maze, scene: BABYLON.Scene) => {
-  const walls: BABYLON.Mesh[] = [];
+  const boxes: BABYLON.Mesh[] = [];
   for (let x = 0; x < maze.size; x++) {
     for (let z = 0; z < maze.size; z++) {
       if (maze.map[x][z] === 1) {
@@ -14,11 +16,21 @@ export const createWalls = (maze: Maze, scene: BABYLON.Scene) => {
           },
           scene
         );
-        walls.push(wall);
+        boxes.push(wall);
       }
     }
   }
-  return BABYLON.Mesh.MergeMeshes(walls);
+  const walls = BABYLON.Mesh.MergeMeshes(boxes)!;
+  const wallMaterial = new BABYLON.StandardMaterial('wall', scene);
+  wallMaterial.diffuseTexture = new BABYLON.Texture(stoneImage, scene);
+  walls.material = wallMaterial;
+  walls.physicsImpostor = new BABYLON.PhysicsImpostor(
+    walls,
+    BABYLON.PhysicsImpostor.MeshImpostor,
+    {mass: 0, restitution: 0},
+    scene
+  );
+  return walls;
 };
 
 const createWall = (

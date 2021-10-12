@@ -2,8 +2,7 @@
   "license": "MIT",
   "scripts": {
     "serve": "webpack serve",
-    "release": "webpack --progress",
-    "test": "ts-node src/test.ts"
+    "release": "webpack --progress"
   },
   "dependencies": {
     "babylonjs": "5.0.0-alpha.50",
