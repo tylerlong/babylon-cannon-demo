@@ -9,6 +9,7 @@ import concreteImage from './concrete.png';
 import stoneImage from './stone.png';
 import rollingWav from './rolling.wav';
 import clinkWav from './clink.wav';
+import dingWav from './ding.wav';
 
 import {createWalls} from './utils';
 import Maze from './maze';
@@ -26,6 +27,11 @@ rollingSound.play();
 const clinkSound = new Howl({
   src: clinkWav,
   volume: 1 / 16,
+});
+
+const dingSound = new Howl({
+  src: dingWav,
+  volume: 1 / 8,
 });
 
 const maze = new Maze(11);
@@ -167,9 +173,6 @@ engine.runRenderLoop(() => {
   camera.setTarget(sphere.position);
   const v = sphere.physicsImpostor!.getLinearVelocity()!;
   rollingSound.volume(Math.max(Math.abs(v.x), Math.abs(v.z)) / speed / 2);
-  if (v.y < 0) {
-    rollingSound.volume(0); // fall
-  }
   scene.render();
 });
 
