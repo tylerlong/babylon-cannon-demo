@@ -23,5 +23,43 @@ export const createBall = (maze: Maze, scene: BABYLON.Scene) => {
     {mass: 1, restitution: 0.9, friction: 1},
     scene
   );
+
+  const speed = 3;
+  window.addEventListener('keydown', event => {
+    switch (event.key) {
+      case 'ArrowLeft': {
+        event.preventDefault();
+        ball.physicsImpostor?.setLinearVelocity(
+          new BABYLON.Vector3(-speed, 0, 0)
+        );
+        break;
+      }
+      case 'ArrowRight': {
+        event.preventDefault();
+        ball.physicsImpostor?.setLinearVelocity(
+          new BABYLON.Vector3(speed, 0, 0)
+        );
+        break;
+      }
+      case 'ArrowUp': {
+        event.preventDefault();
+        ball.physicsImpostor?.setLinearVelocity(
+          new BABYLON.Vector3(0, 0, speed)
+        );
+        break;
+      }
+      case 'ArrowDown': {
+        event.preventDefault();
+        ball.physicsImpostor?.setLinearVelocity(
+          new BABYLON.Vector3(0, 0, -speed)
+        );
+        break;
+      }
+      default: {
+        break;
+      }
+    }
+  });
+
   return ball;
 };
